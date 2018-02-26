@@ -1,7 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from prompt_toolkit import prompt
+import urwid
+from pyshark.capture.file_capture import FileCapture
 
-if __name__ == '__main__':
-    answer = prompt('Give me some input: ')
-    print('You said: %s' % answer)
+
+display_filter = urwid.Edit("Filter:")
+
+def packet_lists():
+    packets = FileCapture("test.pcapng")
+    body = []
+    for packet in packets:
+        body.append(urwid.Text(packet.number))
+    return urwid.ListBox(urwid.SimpleFocusListWalker(body))
+
+
+main_list = packet_lists()
+main = urwid.Frame(main_list, header=display_filter, focus_part='header')
+
+
+urwid.MainLoop(main, palette=[('reversed', 'standout', '')]).run()
