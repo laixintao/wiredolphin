@@ -39,6 +39,8 @@ class DolphinPacket(dict):
             'number': packet.number,
             'length': packet.length,
             'time_delta': "%.6f" % self.get_time_delta(packet.sniff_timestamp),
+            'src': packet.ip.src,
+            'dst': packet.ip.dst,
         })
 
         if 'tcp' in packet:
