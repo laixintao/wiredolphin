@@ -13,9 +13,4 @@ setup(
     author_email='laixintao1995@163.com',
     url='https://www.python.org/',
     packages=['wiredolphin'],
-    install_requires=requirements,
-    dependency_links=[
-        "https://github.com/tonycpsu/panwid/tarball/master#egg=panwid-0.2.0dev",
-        "https://github.com/laixintao/py3shark/tarball/master#egg=pyshark-0.4.0",
-    ]
 )
