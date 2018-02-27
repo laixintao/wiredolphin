@@ -3,7 +3,11 @@
 import urwid
 from pyshark.capture.file_capture import FileCapture
 
-print(" a ahahahh ")
+import logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename="datatable.log"
+)
 
 
 def packet_lists():

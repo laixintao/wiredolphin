@@ -1,22 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 import logging
-logger = logging.getLogger(__name__)
-formatter = logging.Formatter("%(asctime)s [%(levelname)8s] %(message)s",
-                                datefmt='%Y-%m-%d %H:%M:%S')
-fh = logging.FileHandler("datatable.log")
-fh.setFormatter(formatter)
-logger.setLevel(logging.DEBUG)
-logging.getLogger("panwid.datatable").setLevel(logging.DEBUG)
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename="datatable.log"
+)
 
 import urwid
-import os
 import random
 import string
 
 from panwid.datatable import DataTableColumn, DataTable
 
-
+logger = logging.getLogger("packets")
 NORMAL_FG_MONO = "white"
 NORMAL_FG_16 = "light gray"
 NORMAL_BG_16 = "black"
