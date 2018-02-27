@@ -3,6 +3,8 @@
 import urwid
 from pyshark.capture.file_capture import FileCapture
 
+print(" a ahahahh ")
+
 
 def packet_lists():
     packets = FileCapture("test.pcapng")

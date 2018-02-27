@@ -3,7 +3,8 @@
 import urwid
 from urwid_utils.palette import PaletteEntry, Palette
 from panwid.datatable import DataTable
-from wiredolphin.packet_table import table
+
+from packet_table import table
 
 screen = urwid.raw_display.Screen()
 screen.set_terminal_properties(256)
@@ -34,10 +35,11 @@ def global_input(key):
     else:
         return False
 
-main = urwid.MainLoop(
+main_loop = urwid.MainLoop(
     urwid.Frame(urwid.Filler(box, valign="top")),
     palette=palette,
     screen=screen,
     unhandled_input=global_input
 )
-main.run()
+
+main_loop.run()
