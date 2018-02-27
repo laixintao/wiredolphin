@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import random
 import logging
 logging.basicConfig(
     level=logging.DEBUG,
@@ -8,10 +8,10 @@ logging.basicConfig(
 )
 
 import urwid
-import random
 import string
 
 from panwid.datatable import DataTableColumn, DataTable
+from shark import packet_lists
 
 logger = logging.getLogger("packets")
 NORMAL_FG_MONO = "white"
@@ -22,106 +22,41 @@ NORMAL_BG_256 = "g0"
 
 
 COLUMNS = [
-    # DataTableColumn("uniqueid", width=10, align="right", padding=1),
-    DataTableColumn("foo", label="Foo", width=5, align="right",
-                    sort_key = lambda v: (v is None, v),
+    DataTableColumn("number", label="No.", width=5, align="right",
+                    sort_key=lambda v: (v is None, v),
                     attr="color", padding=0,
-                    footer_fn = lambda column, values: sum(v for v in values if v is not None)),
-    DataTableColumn("bar", label="Bar", width=10, align="right",
-                    sort_reverse=True, sort_icon=False, padding=1),# margin=5),
-    DataTableColumn("baz", label="Baz!", width=("weight", 1)),
-    DataTableColumn(
-        "qux",
-        label=urwid.Text([("red", "q"), ("green", "u"), ("blue", "x")]),
-        width=5, hide=True),
-    # DataTableColumn("empty", label="empty", width=5),
+                    footer_fn=lambda column, values: sum(v for v in values if v is not None)),
+    DataTableColumn("length", label="Len", width=5, align="right",
+                    sort_key=lambda v: (v is None, v),
+                    attr="color", padding=0,
+                    footer_fn=lambda column, values: sum(v for v in values if v is not None)),
+    DataTableColumn("tcp_port", label="srcp", width=5, align="right",
+                    sort_key=lambda v: (v is None, v),
+                    attr="color", padding=0,
+                    footer_fn=lambda column, values: sum(v for v in values if v is not None)),
+    DataTableColumn("highest_layer", label="HeiLay", width=8, align="right",
+                    sort_key=lambda v: (v is None, v),
+                    attr="color", padding=0,
+                    footer_fn=lambda column, values: sum(v for v in values if v is not None)),
 ]
 
 class ExampleDataTable(DataTable):
 
     columns = COLUMNS[:]
 
-    index="index"
+    index = "number"
 
-    def __init__(self, num_rows=10, *args, **kwargs):
-        self.num_rows = num_rows
-        # indexes = random.sample(range(self.num_rows*2), num_rows)
-        self.randomize_query_data()
-        self.last_rec = len(self.query_data)
+    def __init__(self, packets, *args, **kwargs):
+        self.packets = packets
+        self.last_rec = len(self.packets)
         super(ExampleDataTable, self).__init__(*args, **kwargs)
 
-    def randomize_query_data(self):
-        indexes = list(range(self.num_rows))
-        self.query_data = [
-            self.random_row(indexes[i]) for i in range(self.num_rows)
-            # self.random_row(i) for i in range(self.num_rows)
-        ]
-        random.shuffle(self.query_data)
-
-    def random_row(self, uniqueid):
-        return dict(uniqueid=uniqueid,
-                    foo=random.choice(list(range(100)) + [None]*20),
-                    bar = (random.uniform(0, 1000)
-                           if random.randint(0, 5)
-                           else None),
-                    baz =(''.join(random.choice(
-                        string.ascii_uppercase
-                        + string.ascii_lowercase
-                        + string.digits + ' ' * 10
-                    ) for _ in range(random.randint(5, 20)))
-                          if random.randint(0, 5)
-                          else None),
-                    qux = urwid.Text([("red", "1"),("green", "2"), ("blue", "3")]),
-                    xyzzy = ( "%0.1f" %(random.uniform(0, 100))
-                           if random.randint(0, 5)
-                           else None),
-                    baz_len = lambda r: len(r["baz"]) if r.get("baz") else 0,
-                    # xyzzy = random.randint(10, 100),
-                    empty = None,
-                    a = dict(b=dict(c=random.randint(0, 100))),
-                    d = dict(e=dict(f=random.randint(0, 100))),
-                    color = ["red", "green", "blue"][random.randrange(3)],
-
-        )
-
-
     def query(self, sort=(None, None), offset=None, limit=None, load_all=False):
-
-        logger.info("query: offset=%s, limit=%s, sort=%s" %(offset, limit, sort))
-        try:
-            sort_field, sort_reverse = sort
-        except:
-            sort_field = sort
-            sort_reverse = None
-
-        if sort_field:
-            kwargs = {}
-            kwargs["key"] = lambda x: (x.get(sort_field) is None,
-                                       x.get(sort_field),
-                                       x.get(self.index))
-            if sort_reverse:
-                kwargs["reverse"] = sort_reverse
-            self.query_data.sort(
-                **kwargs
-            )
-        if offset is not None:
-            if not load_all:
-                start = offset
-                end = offset + limit
-                r = self.query_data[start:end]
-                logger.debug("%s:%s (%s)" %(start, end, len(r)))
-            else:
-                r = self.query_data[offset:]
-        else:
-            r = self.query_data
-
-        for d in r:
-            yield d
-
+        logger.info("Query result: {}".format(self.packets))
+        return self.packets
 
     def query_result_count(self):
-        return self.num_rows
-
+        return len(self.packets)
 
     def keypress(self, size, key):
         if key == "meta r":
@@ -219,8 +154,9 @@ class ExampleDataTable(DataTable):
         else:
             return super(ExampleDataTable, self).keypress(size, key)
 
+
 def detail_fn(data):
-    logger.info("detail run...")
+    logger.info("detail_fn run...")
     return urwid.Padding(urwid.Columns([
         ("weight", 1, data.get("qux")),
         ("weight", 1, urwid.Text(str(data.get("baz_len")))),
@@ -228,10 +164,11 @@ def detail_fn(data):
     ]))
 
 table = ExampleDataTable(
-    10,
+    packet_lists(),
     index="uniqueid",
     detail_fn=detail_fn,
     detail_column="bar",
+    with_scrollbar=True,
     sort_refocus = True
 )
 urwid.connect_signal(
