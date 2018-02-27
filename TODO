@@ -1,0 +1,2 @@
+ - fix bug: https://github.com/KimiNewt/pyshark/issues/250
+ - \x character display like wireshark
