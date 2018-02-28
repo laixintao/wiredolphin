@@ -43,6 +43,7 @@ COLUMNS = [
                     footer_fn=lambda column, values: sum(v for v in values if v is not None)),
     DataTableColumn("Info", label="Info", align="left",
                     attr="color", padding=0,
+                    wrap='clip',
                     footer_fn=lambda column, values: sum(v for v in values if v is not None)),
 ]
 

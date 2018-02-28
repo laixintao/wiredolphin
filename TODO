@@ -1,2 +1,4 @@
- - fix bug: https://github.com/KimiNewt/pyshark/issues/250
- - \x character display like wireshark
+ - [ ] fix bug: https://github.com/KimiNewt/pyshark/issues/250
+ - [x] \x character display like wireshark
+ - [x] Info new line wrap as "clip"
+ - [ ] detail page develop
