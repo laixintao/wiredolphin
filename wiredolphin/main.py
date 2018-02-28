@@ -21,13 +21,12 @@ palette = Palette("default", **entries)
 label = "Filter:"
 help_text = "Use <Ctrl p> to focus on Filter."
 pile = urwid.Pile([
-    ("pack", urwid.Text(label)),
+    ("pack", urwid.Edit(label)),
     ("pack", urwid.Divider("\N{HORIZONTAL BAR}")),
     ("weight", 1, table),
     ("pack", urwid.Divider("\N{HORIZONTAL BAR}")),
     ("pack", urwid.Text(help_text))
 ])
-box = urwid.BoxAdapter(urwid.LineBox(pile), 25)
 
 def global_input(key):
     if key in ('q', 'Q'):
@@ -36,7 +35,7 @@ def global_input(key):
         return False
 
 main_loop = urwid.MainLoop(
-    urwid.Frame(urwid.Filler(box, valign="top")),
+    urwid.Frame(pile),
     palette=palette,
     screen=screen,
     unhandled_input=global_input
