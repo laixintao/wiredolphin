@@ -9,10 +9,6 @@ from pyshark.capture.file_capture import FileCapture
 
 from ipaddress import ip_address
 import logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    filename="datatable.log"
-)
 logger = logging.getLogger("shark")
 
 

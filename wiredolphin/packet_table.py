@@ -58,7 +58,6 @@ class ExampleDataTable(DataTable):
         super(ExampleDataTable, self).__init__(*args, **kwargs)
 
     def query(self, sort=(None, None), offset=None, limit=None, load_all=False):
-        logger.info("Query result: {}".format(self.packets))
         return self.packets
 
     def query_result_count(self):
