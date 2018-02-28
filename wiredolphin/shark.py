@@ -23,5 +23,7 @@ def packet_lists():
             'No.': int(packet._fields['No.']),
             'Protocol': packet._fields['Protocol'],
             'Time': float(packet._fields['Time']),
-            'Info': packet._fields['Info'],
+            # to decode a literal escape in str
+            # see https://stackoverflow.com/questions/26311277/evaluate-utf-8-literal-escape-sequences-in-a-string-in-python3
+            'Info': packet._fields['Info'].encode().decode('unicode-escape').encode('latin1').decode('utf-8'),
         }
