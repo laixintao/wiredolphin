@@ -11,7 +11,6 @@ import urwid
 import string
 
 from panwid.datatable import DataTableColumn, DataTable
-from shark import packet_lists
 
 logger = logging.getLogger("packets")
 NORMAL_FG_MONO = "white"
@@ -170,8 +169,8 @@ def detail_fn(data):
     ]))
 
 table = ExampleDataTable(
-    list(packet_lists()),
-    index="uniqueid",
+    [], # init as empty, `add_row` dynamic
+    index="No.",
     detail_fn=detail_fn,
     detail_column="bar",
     with_scrollbar=True,
@@ -180,4 +179,18 @@ table = ExampleDataTable(
 urwid.connect_signal(
     table, "select",
     lambda source, selection: logger.info("selection: %s" %(selection))
+)
+
+table.add_row(
+        {
+            'Destination': "1.1.1.1",
+            'Source': "1.1.1.1",
+            'Length': 100,
+            'No.': 97,
+            'Protocol': "TCP",
+            'Time': 0.2020,
+            # to decode a literal escape in str
+            # see https://stackoverflow.com/questions/26311277/evaluate-utf-8-literal-escape-sequences-in-a-string-in-python3
+            'Info': "test package",
+        }
 )

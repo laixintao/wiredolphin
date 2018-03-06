@@ -11,12 +11,15 @@ from ipaddress import ip_address
 import logging
 logger = logging.getLogger("shark")
 
+from wiredolphin.packet_table import table
 
 def packet_lists():
-    packets = FileCapture("test.pcapng", only_summaries=True)
+    capture = FileCapture("test.pcapng", only_summaries=True)
     # https://docs.python.org/3/library/ipaddress.html
-    for packet in packets:
-        yield {
+
+
+def add_packet_to_table(packet):
+    table.add_row({
             'Destination': ip_address(packet._fields['Destination']),
             'Source': ip_address(packet._fields['Source']),
             'Length': int(packet._fields['Length']),
