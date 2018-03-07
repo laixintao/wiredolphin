@@ -13,11 +13,11 @@ from pyshark.capture.file_capture import FileCapture
 logger = logging.getLogger("shark")
 
 
-async def write_test_log():
-    logger.info("test log...")
-
-
 def add_packet_to_table(table, packet):
+    """
+    Actually callback, use global ``table`` will cause a problem.
+    Don't know why...
+    """
     #  logger.info(table)
     table.add_row({
         'Destination': ip_address(packet._fields['Destination']),
@@ -35,6 +35,7 @@ def add_packet_to_table(table, packet):
 def make_packet_callback(table):
     add_packet_to_table_partial = partial(add_packet_to_table, table)
     return add_packet_to_table_partial
+
 
 async def read_packet_lists(callback):
     logger.info("capture run...")
