@@ -180,3 +180,4 @@ urwid.connect_signal(
     table, "select",
     lambda source, selection: logger.info("selection: %s" %(selection))
 )
+
