@@ -8,7 +8,7 @@ from urwid_utils.palette import PaletteEntry, Palette
 from panwid.datatable import DataTable
 
 from packet_table import table
-from wiredolphin.shark import write_test_log, read_packet_lists
+from wiredolphin.shark import write_test_log, read_packet_lists, add_row
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,9 @@ def global_input(key):
     else:
         return False
 
-asyncio.ensure_future(read_packet_lists())
+# asyncio.ensure_future(read_packet_lists())
+#asyncio.ensure_future(add_row())
+add_row()
 main_loop = urwid.MainLoop(
     urwid.Frame(pile),
     palette=palette,
@@ -50,6 +52,7 @@ main_loop = urwid.MainLoop(
     unhandled_input=global_input,
     event_loop=urwid.AsyncioEventLoop(loop=event_loop)
 )
+
 
 
 main_loop.run()

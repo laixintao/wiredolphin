@@ -50,7 +50,7 @@ class ExampleDataTable(DataTable):
 
     columns = COLUMNS[:]
 
-    index = "number"
+    index = "No."
 
     def __init__(self, packets, *args, **kwargs):
         self.packets = packets
@@ -179,18 +179,4 @@ table = ExampleDataTable(
 urwid.connect_signal(
     table, "select",
     lambda source, selection: logger.info("selection: %s" %(selection))
-)
-
-table.add_row(
-        {
-            'Destination': "1.1.1.1",
-            'Source': "1.1.1.1",
-            'Length': 100,
-            'No.': 97,
-            'Protocol': "TCP",
-            'Time': 0.2020,
-            # to decode a literal escape in str
-            # see https://stackoverflow.com/questions/26311277/evaluate-utf-8-literal-escape-sequences-in-a-string-in-python3
-            'Info': "test package",
-        }
 )
