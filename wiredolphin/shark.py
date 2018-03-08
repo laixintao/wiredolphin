@@ -3,12 +3,12 @@
 """
 Load pcapng using pyshark
 """
-import asyncio
 from ipaddress import ip_address
 import logging
 from functools import partial
 
-from pyshark.capture.file_capture import FileCapture
+from pyshark.capture.inmem_capture import InMemCapture
+from scapy.all import rdpcap, raw
 
 logger = logging.getLogger("shark")
 
@@ -36,10 +36,28 @@ def make_packet_callback(table):
     add_packet_to_table_partial = partial(add_packet_to_table, table)
     return add_packet_to_table_partial
 
+async def read_file(filename):
+    logger.debug("scapy.rdpcap start to read file...")
+    packets = rdpcap(filename)
+    logger.debug("scapy.rdpcap read file done! len: {}".format(len(packets))) 
+    return [raw(packet) for packet in packets]
+
 
 async def read_packet_lists(callback):
+    """ coroutine to read packets to table """
     logger.info("capture run...")
-    capture = FileCapture("test.pcapng", only_summaries=True, eventloop=asyncio.get_event_loop())
+    capture = InMemCapture(only_summaries=True)
     # https://docs.python.org/3/library/ipaddress.html
     logger.info("capture created..")
+    raw_packets = await read_file("test.pcapng")
+    logger.info("Capture Feed packets")
+    capture.feed_packets(raw_packets)
     await capture.packets_from_tshark(callback)
+
+
+if __name__ == '__main__':
+    def print_callback(packet):
+        print(packet)
+    import asyncio
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(read_packet_lists(print_callback))
