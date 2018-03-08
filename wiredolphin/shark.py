@@ -3,61 +3,42 @@
 """
 Load pcapng using pyshark
 """
-from ipaddress import ip_address
+import asyncio
 import logging
-from functools import partial
 
 from pyshark.capture.inmem_capture import InMemCapture
 from scapy.all import rdpcap, raw
 
-logger = logging.getLogger("shark")
+from wiredolphin.packet_table import table
+
+logger = logging.getLogger(__name__)
+packets = []
 
 
-def add_packet_to_table(table, packet):
-    """
-    Actually callback, use global ``table`` will cause a problem.
-    Don't know why...
-    """
-    #  logger.info(table)
-    table.add_row({
-        'Destination': ip_address(packet._fields['Destination']),
-        'Source': ip_address(packet._fields['Source']),
-        'Length': int(packet._fields['Length']),
-        'No.': int(packet._fields['No.']),
-        'Protocol': packet._fields['Protocol'],
-        'Time': float(packet._fields['Time']),
-        # to decode a literal escape in str
-        # see https://stackoverflow.com/questions/26311277/evaluate-utf-8-literal-escape-sequences-in-a-string-in-python3
-        'Info': packet._fields['Info'].encode().decode('unicode-escape').encode('latin1').decode('utf-8'),
-    })
-
-
-def make_packet_callback(table):
-    add_packet_to_table_partial = partial(add_packet_to_table, table)
-    return add_packet_to_table_partial
-
-async def read_file(filename):
+def load_packets(filename):
+    global packets
     logger.debug("scapy.rdpcap start to read file...")
-    packets = rdpcap(filename)
-    logger.debug("scapy.rdpcap read file done! len: {}".format(len(packets))) 
-    return [raw(packet) for packet in packets]
+    parsed_packets = rdpcap(filename)
+    logger.debug("scapy.rdpcap read file done! len: {}".format(len(packets)))
+    packets = [raw(packet) for packet in parsed_packets]
 
 
-async def read_packet_lists(callback):
+async def capture_memeory_packets(*args, **kwargs):
     """ coroutine to read packets to table """
-    logger.info("capture run...")
-    capture = InMemCapture(only_summaries=True)
-    # https://docs.python.org/3/library/ipaddress.html
-    logger.info("capture created..")
-    raw_packets = await read_file("test.pcapng")
+    global packets
+
+    capture = InMemCapture(*args, **kwargs)
     logger.info("Capture Feed packets")
-    capture.feed_packets(raw_packets)
-    await capture.packets_from_tshark(callback)
+    logger.debug("Start to feed_packets...")
+    logger.info("Packets: {}".format(len(packets)))
+    await capture.feed_packets(packets)
+    logger.debug("Start to add_table...")
+
+    for packet in capture:
+        table.add_packet(packet)
 
 
-if __name__ == '__main__':
-    def print_callback(packet):
-        print(packet)
-    import asyncio
+if __name__ == "__main__":
+    load_packets("test.pcapng")
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(read_packet_lists(print_callback))
+    loop.run_until_complete(capture_memeory_packets(only_summaries=True))

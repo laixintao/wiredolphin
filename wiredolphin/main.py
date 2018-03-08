@@ -6,9 +6,10 @@ import logging
 import urwid
 from urwid_utils.palette import PaletteEntry, Palette
 from panwid.datatable import DataTable
+import click
 
 from packet_table import table
-from wiredolphin.shark import read_packet_lists, make_packet_callback
+from wiredolphin.shark import load_packets, capture_memeory_packets
 
 logger = logging.getLogger(__name__)
 
@@ -42,15 +43,22 @@ def global_input(key):
     else:
         return False
 
-callback = make_packet_callback(table)
-asyncio.ensure_future(read_packet_lists(callback))
 
-main_loop = urwid.MainLoop(
-    urwid.Frame(pile),
-    palette=palette,
-    screen=screen,
-    unhandled_input=global_input,
-    event_loop=urwid.AsyncioEventLoop(loop=event_loop)
-)
+@click.command()
+@click.argument('filename')
+def wiredolphin(filename):
+    load_packets(filename)
+    asyncio.ensure_future(capture_memeory_packets(only_summaries=True))
+    main_loop = urwid.MainLoop(
+        urwid.Frame(pile),
+        palette=palette,
+        screen=screen,
+        unhandled_input=global_input,
+        event_loop=urwid.AsyncioEventLoop(loop=event_loop)
+    )
 
-main_loop.run()
+    main_loop.run()
+
+
+if __name__ == '__main__':
+    wiredolphin()

@@ -2,10 +2,7 @@
 # -*- coding: utf-8 -*-
 import random
 import logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    filename="datatable.log"
-)
+from ipaddress import ip_address
 
 import urwid
 import string
@@ -62,6 +59,26 @@ class ExampleDataTable(DataTable):
 
     def query_result_count(self):
         return len(self.packets)
+
+
+    def add_packet(self, packet):
+        """
+        Actually callback, use global ``table`` will cause a problem.
+        Don't know why...
+        """
+        logger.info("{}.add_packet {}".format(self, packet))
+        logger.info("files: {}".format(packet._fields))
+        self.add_row({
+            'Destination': ip_address(packet._fields['Destination']),
+            'Source': ip_address(packet._fields['Source']),
+            'Length': int(packet._fields['Length']),
+            'No.': int(packet._fields['No.']),
+            'Protocol': packet._fields['Protocol'],
+            'Time': float(packet._fields['Time']),
+            # to decode a literal escape in str
+            # see https://stackoverflow.com/questions/26311277/evaluate-utf-8-literal-escape-sequences-in-a-string-in-python3
+            'Info': packet._fields['Info'].encode().decode('unicode-escape').encode('latin1').decode('utf-8'),
+        })
 
     def keypress(self, size, key):
         if key == "meta r":
