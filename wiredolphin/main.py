@@ -47,8 +47,8 @@ def global_input(key):
 @click.command()
 @click.argument('filename')
 def wiredolphin(filename):
-    load_packets(filename)
-    asyncio.ensure_future(capture_memeory_packets(only_summaries=True))
+    # load_packets(filename)
+    asyncio.ensure_future(capture_memeory_packets(table, only_summaries=True))
     main_loop = urwid.MainLoop(
         urwid.Frame(pile),
         palette=palette,
