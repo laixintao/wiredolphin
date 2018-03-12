@@ -9,6 +9,7 @@ import logging
 from pyshark.capture.inmem_capture import InMemCapture
 from scapy.all import rdpcap, raw
 
+from wiredolphin.pantable import table
 
 logger = logging.getLogger(__name__)
 packets = []
@@ -22,11 +23,11 @@ def load_packets(filename):
     packets = [raw(packet) for packet in parsed_packets]
 
 
-async def capture_memeory_packets(table, *args, **kwargs):
+async def capture_memeory_packets(*args, **kwargs):
     """ coroutine to read packets to table """
     global packets
     logger.info("packets: {}".format(len(packets)))
-    capture = InMemCapture(*args, **kwargs)
+    capture = InMemCapture(bpf_filter="dns", *args, **kwargs)
     packets = await capture.feed_packets(packets)
     for packet in packets:
         table.add_packet(packet)
