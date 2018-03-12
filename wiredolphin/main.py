@@ -8,7 +8,7 @@ from urwid_utils.palette import PaletteEntry, Palette
 from panwid.datatable import DataTable
 import click
 
-from packet_table import table
+from wiredolphin.pantable import table
 from wiredolphin.shark import load_packets, capture_memeory_packets
 
 logger = logging.getLogger(__name__)

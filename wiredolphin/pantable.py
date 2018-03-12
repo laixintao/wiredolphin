@@ -9,7 +9,8 @@ import string
 
 from panwid.datatable import DataTableColumn, DataTable
 
-logger = logging.getLogger("packets")
+logger = logging.getLogger(__name__)
+
 NORMAL_FG_MONO = "white"
 NORMAL_FG_16 = "light gray"
 NORMAL_BG_16 = "black"
@@ -43,7 +44,7 @@ COLUMNS = [
                     footer_fn=lambda column, values: sum(v for v in values if v is not None)),
 ]
 
-class ExampleDataTable(DataTable):
+class PacketTable(DataTable):
 
     columns = COLUMNS[:]
 
@@ -52,7 +53,7 @@ class ExampleDataTable(DataTable):
     def __init__(self, packets, *args, **kwargs):
         self.packets = packets
         self.last_rec = len(self.packets)
-        super(ExampleDataTable, self).__init__(*args, **kwargs)
+        super(PacketTable, self).__init__(*args, **kwargs)
 
     def query(self, sort=(None, None), offset=None, limit=None, load_all=False):
         return self.packets
@@ -173,7 +174,7 @@ class ExampleDataTable(DataTable):
                 self.swap_rows(self.focus_position, self.focus_position+1, "foo")
                 self.focus_position += 1
         else:
-            return super(ExampleDataTable, self).keypress(size, key)
+            return super(PacketTable, self).keypress(size, key)
 
 
 def detail_fn(data):
@@ -184,7 +185,8 @@ def detail_fn(data):
         ("weight", 2, urwid.Text(str(data.get("xyzzy")))),
     ]))
 
-table = ExampleDataTable(
+
+table = PacketTable(
     [], # init as empty, `add_row` dynamic
     index="No.",
     detail_fn=detail_fn,
