@@ -77,7 +77,6 @@ class ExampleDataTable(DataTable):
             # see https://stackoverflow.com/questions/26311277/evaluate-utf-8-literal-escape-sequences-in-a-string-in-python3
             'Info': packet._fields['Info'].encode().decode('unicode-escape').encode('latin1').decode('utf-8'),
         }
-        logger.info("data: {}".format(data))
         self.add_row(data)
 
     def keypress(self, size, key):
