@@ -9,7 +9,7 @@ from panwid.datatable import DataTable
 import click
 
 from wiredolphin.pantable import table
-from wiredolphin.shark import load_packets, capture_memeory_packets
+from wiredolphin.shark import capture_memeory_packets
 
 logger = logging.getLogger(__name__)
 
@@ -47,8 +47,7 @@ def global_input(key):
 @click.command()
 @click.argument('filename')
 def wiredolphin(filename):
-    load_packets(filename)
-    asyncio.ensure_future(capture_memeory_packets(only_summaries=True))
+    asyncio.ensure_future(capture_memeory_packets(filename, only_summaries=True))
     main_loop = urwid.MainLoop(
         urwid.Frame(pile),
         palette=palette,
