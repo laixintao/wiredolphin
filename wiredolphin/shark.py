@@ -17,7 +17,7 @@ async def capture_memeory_packets(filename, *args, **kwargs):
     """ coroutine to read packets to table """
     summary_capture = FileCapture(filename, only_summaries=True, *args, **kwargs)
     detail_capture = FileCapture(filename, only_summaries=False, *args, **kwargs)
-    await summary_capture.packets_from_tshark(table.add_packet, close_tshark=False)
+    await summary_capture.packets_from_tshark(table.add_packet)
 
     table.packets_loaded = True
     table.summary_capture = summary_capture
