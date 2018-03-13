@@ -12,5 +12,10 @@ setup(
     author='laixintao',
     author_email='laixintao1995@163.com',
     url='https://www.python.org/',
+    entry_points={
+        'console_scripts': [
+            'wiredolphin = wiredolphin.main:wiredolphin'
+        ]
+    },
     packages=['wiredolphin'],
 )
