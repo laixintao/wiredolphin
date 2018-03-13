@@ -53,6 +53,7 @@ class PacketTable(DataTable):
     def __init__(self, packets, *args, **kwargs):
         self.packets = packets
         self.last_rec = len(self.packets)
+        self.packets_loaded = False  # flag capture status
         super(PacketTable, self).__init__(*args, **kwargs)
 
     def query(self, sort=(None, None), offset=None, limit=None, load_all=False):
@@ -79,6 +80,13 @@ class PacketTable(DataTable):
             'Info': packet._fields['Info'].encode().decode('unicode-escape').encode('latin1').decode('utf-8'),
         }
         self.add_row(data)
+
+    def toggle_details(self):
+        logger.info("Toggle details: {}".format(self.selection))
+        logger.info("TableRow values: {}".format(self.selection.values))
+        packet_no = self.selection.values['No.']
+        logger.info("--------------------Packet detail--------------")
+        logger.info(self.detail_capture[packet_no])
 
     def keypress(self, size, key):
         if key == "meta r":
