@@ -1,3 +1,5 @@
 py3shark
 urwid
 click
+urwid-utils
+panwid
